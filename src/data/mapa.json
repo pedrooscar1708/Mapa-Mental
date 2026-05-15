@@ -1,0 +1,403 @@
+{
+  "id": "root",
+  "text": "Análise de Mercado",
+  "x": 1200,
+  "y": 800,
+  "collapsed": false,
+  "branch": null,
+  "children": [
+    {
+      "id": "analise-tecnica",
+      "text": "Análise Técnica",
+      "x": 1600,
+      "y": 500,
+      "collapsed": false,
+      "branch": "a",
+      "children": [
+        {
+          "id": "bolsas",
+          "text": "Bolsas",
+          "x": 1280,
+          "y": 470,
+          "collapsed": false,
+          "children": [
+            {
+              "id": "bolsas-bancos",
+              "text": "Bancos",
+              "x": 1050,
+              "y": 350,
+              "collapsed": false,
+              "children": [
+                {
+                  "id": "itau",
+                  "text": "Itaú",
+                  "x": 850,
+                  "y": 310,
+                  "collapsed": false,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "bolsas-corretoras",
+              "text": "Corretoras",
+              "x": 1050,
+              "y": 430,
+              "collapsed": false,
+              "children": [
+                {
+                  "id": "btg",
+                  "text": "BTG",
+                  "x": 850,
+                  "y": 400,
+                  "collapsed": false,
+                  "children": []
+                },
+                {
+                  "id": "xp",
+                  "text": "XP",
+                  "x": 850,
+                  "y": 460,
+                  "collapsed": false,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "brasil",
+              "text": "Brasil",
+              "x": 1050,
+              "y": 520,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "americano",
+              "text": "Americano",
+              "x": 1050,
+              "y": 580,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "cfd",
+              "text": "CFD",
+              "x": 1050,
+              "y": 640,
+              "collapsed": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "ferramenta",
+          "text": "Ferramenta",
+          "x": 2080,
+          "y": 600,
+          "collapsed": false,
+          "children": [
+            {
+              "id": "historia",
+              "text": "História",
+              "x": 2400,
+              "y": 350,
+              "collapsed": false,
+              "doc": "historia",
+              "children": [
+                {
+                  "id": "hist-japao",
+                  "text": "Origens no Japão (séc. XVII) — comércio de arroz",
+                  "x": 2720,
+                  "y": 300,
+                  "collapsed": false,
+                  "children": []
+                },
+                {
+                  "id": "hist-ocidente",
+                  "text": "Ocidente: Charles Dow (final séc. XIX)",
+                  "x": 2720,
+                  "y": 360,
+                  "collapsed": false,
+                  "children": []
+                },
+                {
+                  "id": "hist-computadores",
+                  "text": "Popularização: anos 1980–1990 com computadores",
+                  "x": 2720,
+                  "y": 420,
+                  "collapsed": false,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "candlestick",
+              "text": "Candlestick",
+              "x": 2400,
+              "y": 430,
+              "collapsed": false,
+              "doc": "candlestick",
+              "children": [
+                {
+                  "id": "candlestick-padroes",
+                  "text": "Figuras / Padrões",
+                  "x": 2720,
+                  "y": 430,
+                  "collapsed": false,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "fibonacci",
+              "text": "Fibonacci",
+              "x": 2400,
+              "y": 500,
+              "collapsed": false,
+              "doc": "fibonacci",
+              "children": []
+            },
+            {
+              "id": "volume",
+              "text": "Volume",
+              "x": 2400,
+              "y": 560,
+              "collapsed": false,
+              "doc": "volume",
+              "children": []
+            },
+            {
+              "id": "ifr",
+              "text": "IFR",
+              "x": 2400,
+              "y": 620,
+              "collapsed": false,
+              "doc": "ifr",
+              "children": []
+            },
+            {
+              "id": "obv",
+              "text": "OBV",
+              "x": 2400,
+              "y": 680,
+              "collapsed": false,
+              "doc": "obv",
+              "children": []
+            },
+            {
+              "id": "macd",
+              "text": "MACD",
+              "x": 2400,
+              "y": 740,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "media-movel",
+              "text": "Média Móvel",
+              "x": 2400,
+              "y": 800,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "vwap",
+              "text": "VWAP",
+              "x": 2400,
+              "y": 860,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "suporte-resistencia",
+              "text": "Suporte / Resistência",
+              "x": 2400,
+              "y": 920,
+              "collapsed": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "plataforma",
+          "text": "Plataforma",
+          "x": 1850,
+          "y": 1180,
+          "collapsed": false,
+          "children": [
+            {
+              "id": "tradingview",
+              "text": "TradingView",
+              "x": 2150,
+              "y": 1140,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "profit",
+              "text": "Profit",
+              "x": 2150,
+              "y": 1200,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "metatrader",
+              "text": "MetaTrader",
+              "x": 2150,
+              "y": 1260,
+              "collapsed": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "nomes-antigos",
+          "text": "Principais nomes antigos",
+          "x": 1680,
+          "y": 1380,
+          "collapsed": false,
+          "children": [
+            {
+              "id": "munehisa",
+              "text": "Munehisa Homma — pai do candlestick",
+              "x": 1480,
+              "y": 1340,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "charles-dow",
+              "text": "Charles Dow — Teoria de Dow",
+              "x": 1480,
+              "y": 1400,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "elliott",
+              "text": "Ralph Nelson Elliott — Ondas de Elliott",
+              "x": 1480,
+              "y": 1460,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "gann",
+              "text": "W.D. Gann — Análise por tempo/preço",
+              "x": 1480,
+              "y": 1520,
+              "collapsed": false,
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "nomes-atuais",
+          "text": "Principais nomes atuais",
+          "x": 1900,
+          "y": 1560,
+          "collapsed": false,
+          "children": [
+            {
+              "id": "alexander-elder",
+              "text": "Alexander Elder — psicologia + técnica",
+              "x": 1700,
+              "y": 1620,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "steve-nison",
+              "text": "Steve Nison — popularizou candlestick no Ocidente",
+              "x": 1700,
+              "y": 1690,
+              "collapsed": false,
+              "children": []
+            },
+            {
+              "id": "john-murphy",
+              "text": "John Murphy — análise técnica intermercados",
+              "x": 1700,
+              "y": 1760,
+              "collapsed": false,
+              "doc": "john-murphy",
+              "children": []
+            },
+            {
+              "id": "vasco-mamede",
+              "text": "Vasco Mamede",
+              "x": 1900,
+              "y": 1830,
+              "collapsed": false,
+              "doc": "vasco-mamede",
+              "children": [
+                {
+                  "id": "gerenciamento-risco",
+                  "text": "Gerenciamento de Risco",
+                  "x": 2200,
+                  "y": 1830,
+                  "collapsed": false,
+                  "doc": "gerenciamento-risco",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "id": "ruda",
+              "text": "Ruda",
+              "x": 1900,
+              "y": 1900,
+              "collapsed": false,
+              "children": [
+                {
+                  "id": "trading-system",
+                  "text": "Trading System",
+                  "x": 2200,
+                  "y": 1900,
+                  "collapsed": false,
+                  "doc": "trading-system",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "analise-fundamentalista",
+      "text": "Análise Fundamentalista",
+      "x": 1600,
+      "y": 1240,
+      "collapsed": false,
+      "branch": "b",
+      "children": [
+        {
+          "id": "fund-fundamentos",
+          "text": "Estuda fundamentos da empresa/economia",
+          "x": 1980,
+          "y": 1180,
+          "collapsed": false,
+          "children": []
+        },
+        {
+          "id": "fund-indicadores",
+          "text": "Indicadores: P/L, ROE, dívida, lucros",
+          "x": 1980,
+          "y": 1240,
+          "collapsed": false,
+          "children": []
+        },
+        {
+          "id": "fund-longo-prazo",
+          "text": "Foco em valor intrínseco (longo prazo)",
+          "x": 1980,
+          "y": 1300,
+          "collapsed": false,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapa Mental - Análise de Mercado</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <h1>🗺️ Mapa Mental</h1>
+      <button class="btn" id="btn-add" title="Adicionar nó-filho">+ Nó</button>
+      <button class="btn" id="btn-fit" title="Centralizar">Centralizar</button>
+      <button class="btn" id="btn-export" title="Baixar JSON">Exportar</button>
+      <button
+        class="btn"
+        id="btn-import"
+        title="Carregar JSON"
+      >
+        Importar
+      </button>
+      <input
+        type="file"
+        id="file-input"
+        accept="application/json"
+        style="display: none"
+      />
+      <button class="btn" id="btn-reset" title="Atualizar estrutura">
+        🔄 Atualizar
+      </button>
+      <span class="save-indicator" id="save-indicator">✓ Salvo</span>
+      <div class="spacer"></div>
+      <span class="hint">Arraste fundo · scroll = zoom · clique para editar</span>
+    </div>
+
+    <!-- CANVAS -->
+    <div class="canvas-wrap" id="canvas-wrap">
+      <div class="canvas" id="canvas">
+        <svg class="links" id="links" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+
+      <!-- ZOOM CONTROLS -->
+      <div class="zoom-indicator">
+        <button id="zoom-out" title="Diminuir">−</button>
+        <span class="zoom-val" id="zoom-val">100%</span>
+        <button id="zoom-in" title="Aumentar">+</button>
+        <button id="zoom-reset" title="Resetar">⊙</button>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div class="toast" id="toast"></div>
+
+    <!-- SCRIPTS -->
+    <script src="js/mapa-mental.js"></script>
+  </body>
+</html>

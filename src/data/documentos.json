@@ -1,0 +1,74 @@
+{
+  "documentos": [
+    {
+      "id": "candlestick",
+      "nome": "Candlestick",
+      "descricao": "Estudo sobre velas japonesas e padrões gráficos",
+      "arquivo": "candlestick.pdf",
+      "local": "docs"
+    },
+    {
+      "id": "fibonacci",
+      "nome": "Fibonacci",
+      "descricao": "Proporção áurea aplicada a mercados financeiros",
+      "arquivo": "fibonacci.pdf",
+      "local": "docs"
+    },
+    {
+      "id": "vasco-mamede",
+      "nome": "Vasco Mamede",
+      "descricao": "Anotações compiladas do curso de trading",
+      "arquivo": "vasco-mamede.pdf",
+      "local": "docs"
+    },
+    {
+      "id": "john-murphy",
+      "nome": "John Murphy",
+      "descricao": "Análise intermercados e técnica ocidental",
+      "arquivo": "john-murphy.pdf",
+      "local": "docs"
+    },
+    {
+      "id": "gerenciamento-risco",
+      "nome": "Gerenciamento de Risco",
+      "descricao": "Mentalidade e defesa patrimonial",
+      "arquivo": "gerenciamento-risco.pdf",
+      "local": "docs"
+    },
+    {
+      "id": "trading-system",
+      "nome": "Trading System",
+      "descricao": "Sistema de trading estruturado",
+      "arquivo": "trading-system.pdf",
+      "local": "docs"
+    },
+    {
+      "id": "historia",
+      "nome": "História da Análise Técnica",
+      "descricao": "Origem e evolução da análise técnica",
+      "arquivo": "historia.pdf",
+      "local": "docs"
+    },
+    {
+      "id": "volume",
+      "nome": "Volume",
+      "descricao": "Análise de volume nos mercados",
+      "arquivo": "volume.pdf",
+      "local": "docs"
+    },
+    {
+      "id": "ifr",
+      "nome": "IFR - Índice de Força Relativa",
+      "descricao": "Indicador técnico de momentum",
+      "arquivo": "ifr.pdf",
+      "local": "docs"
+    },
+    {
+      "id": "obv",
+      "nome": "OBV - On Balance Volume",
+      "descricao": "Indicador técnico baseado em volume",
+      "arquivo": "obv.pdf",
+      "local": "docs"
+    }
+  ]
+}
