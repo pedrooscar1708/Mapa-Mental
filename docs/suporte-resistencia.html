@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Suporte e Resistência — por Pedro Oscar</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23f7f1e7'/%3E%3Crect x='14' y='12' width='36' height='40' fill='white' stroke='%231a1a1a' stroke-width='2'/%3E%3Cpath d='M18 25 L46 25 M18 39 L46 39' stroke='%23c0392b' stroke-width='3' fill='none'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #f7f1e7;
+    --ink: #1a1a1a;
+    --muted: #4a4a4a;
+    --line: #1a1a1a;
+    --accent: #c0392b;
+    --blue: #2980b9;
+    --gold: #b8860b;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(247, 241, 231, 0.94);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid #d8cdb7;
+    z-index: 50;
+    display: flex; gap: 8px; align-items: center;
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+  .topbar button {
+    background: #fff; color: var(--ink);
+    border: 1px solid #d8cdb7;
+    padding: 6px 12px; border-radius: 6px;
+    cursor: pointer; font-family: inherit;
+  }
+  .topbar .spacer { flex: 1; }
+
+  .page {
+    position: relative;
+    width: 100%; max-width: 960px;
+    min-height: 842px; /* Proporção A4 aproximada */
+    margin: 24px auto;
+    padding: 80px 72px;
+    background: var(--paper);
+    border: 1px solid #d8cdb7;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .page:first-of-type { margin-top: 80px; }
+
+  .corner { position: absolute; pointer-events: none; }
+  .corner.tl { top: 24px; left: 36px; border-top: 1.5px solid var(--line); border-left: 1.5px solid var(--line); width: 60%; height: 140px; }
+  .corner.br { bottom: 24px; right: 36px; border-bottom: 1.5px solid var(--line); border-right: 1.5px solid var(--line); width: 60%; height: 140px; }
+
+  .dots {
+    position: absolute;
+    width: 130px; height: 130px;
+    background-image: radial-gradient(circle, #1a1a1a 1.5px, transparent 2px);
+    background-size: 18px 18px;
+    opacity: 0.3;
+  }
+  .dots.tl { top: 30px; left: 30px; }
+  .dots.br { bottom: 30px; right: 30px; }
+
+  .title-mono {
+    font-family: "Courier New", monospace;
+    font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+  }
+  .h-big { font-size: 48px; text-align: center; margin: 0; }
+  .h-section { font-size: 24px; border-bottom: 2px solid var(--line); display: inline-block; margin-bottom: 20px; }
+  .author { font-size: 20px; color: var(--muted); text-align: center; margin-top: 10px; }
+
+  .body-text { font-size: 15px; text-align: justify; }
+  .body-text strong { color: var(--accent); }
+
+  .chart-sim {
+    background: #fff;
+    border: 1px solid #d8cdb7;
+    height: 200px;
+    margin: 30px 0;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .line-res { position: absolute; top: 40px; width: 90%; border-top: 2px dashed var(--accent); }
+  .line-sup { position: absolute; bottom: 40px; width: 90%; border-top: 2px dashed var(--blue); }
+  .label-f { position: absolute; font-family: monospace; font-size: 12px; font-weight: bold; }
+
+  .book-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+  .book-card { background: #fff; border: 1px solid #d8cdb7; padding: 15px; border-left: 4px solid var(--gold); }
+  .book-card h4 { margin: 0 0 5px 0; font-size: 14px; }
+  .book-card small { color: var(--muted); display: block; margin-bottom: 8px; }
+
+  @media print {
+    .topbar { display: none; }
+    .page { box-shadow: none; border: none; margin: 0; page-break-after: always; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button onclick="window.print()">Gerar PDF / Imprimir</button>
+  <div class="spacer"></div>
+  <small>Trabalho — Análise Técnica</small>
+</div>
+
+<section class="page">
+  <div class="dots tl"></div>
+  <div class="corner tl"></div>
+  <div style="height: 200px;"></div>
+  <h1 class="title-mono h-big">SUPORTE E<br>RESISTÊNCIA</h1>
+  <div class="author">por Pedro Oscar</div>
+  <p style="text-align: center; margin-top: 40px; font-style: italic; color: var(--gold);">
+    "Onde a memória do mercado encontra a pressão de preço."
+  </p>
+  <div class="corner br"></div>
+  <div class="dots br"></div>
+</section>
+
+<section class="page">
+  <h2 class="title-mono h-section">Origem e Evolução</h2>
+  <div class="body-text">
+    <p>Os conceitos de <strong>Suporte e Resistência</strong> são as fundações da análise técnica moderna. Sua origem remonta ao início do século XX, baseada na observação de que o mercado possui "memória".</p>
+    <p><strong>Quem começou a difundir:</strong> O pioneiro foi <strong>Charles Dow</strong> (criador do Wall Street Journal). Através da "Teoria de Dow", ele identificou que os preços se movem em tendências e que picos e vales anteriores servem como pontos de referência psicológicos. Mais tarde, nos anos 30, <strong>Richard Wyckoff</strong> refinou essa ideia ao estudar a oferta e demanda, chamando essas zonas de "áreas de acumulação e distribuição".</p>
+    
+    <div class="chart-sim">
+        <div class="line-res"></div>
+        <span class="label-f" style="top: 20px; color: var(--accent);">RESISTÊNCIA (Excesso de Oferta)</span>
+        <svg width="80%" height="100" viewBox="0 0 400 100">
+            <polyline points="0,80 50,20 100,80 150,20 200,80 250,20 300,80 350,20" fill="none" stroke="#1a1a1a" stroke-width="2" />
+        </svg>
+        <div class="line-sup"></div>
+        <span class="label-f" style="bottom: 20px; color: var(--blue);">SUPORTE (Excesso de Demanda)</span>
+    </div>
+
+    <p><strong>A Psicologia por trás:</strong> Não é mágica; é comportamento humano. Quando o preço atinge um nível onde caiu anteriormente, vendedores lembram do prejuízo e tentam sair "no zero", criando a <strong>Resistência</strong>. Inversamente, quando atinge um nível onde subiu antes, compradores sentem que perderam a oportunidade e entram comprando, criando o <strong>Suporte</strong>.</p>
+  </div>
+</section>
+
+<section class="page">
+  <h2 class="title-mono h-section">Literatura Recomendada</h2>
+  
+  <h3 class="h-sub">Obras em Inglês</h3>
+  <div class="book-grid">
+    <div class="book-card">
+      <h4>Technical Analysis of the Financial Markets</h4>
+      <small>John J. Murphy</small>
+      <p style="font-size: 13px;">Considerada a bíblia do setor. Murphy dedica capítulos inteiros à construção de linhas de tendência e como a inversão de polaridade (suporte que vira resistência) é o sinal mais forte do mercado.</p>
+    </div>
+    <div class="book-card">
+      <h4>Trading in the Zone</h4>
+      <small>Mark Douglas</small>
+      <p style="font-size: 13px;">Embora focado em psicologia, Douglas explica por que suportes e resistências funcionam: eles são a representação visual da mente coletiva dos traders em níveis de preço específicos.</p>
+    </div>
+  </div>
+
+  <h3 class="h-sub" style="margin-top: 30px;">Obras em Português</h3>
+  <div class="book-grid">
+    <div class="book-card">
+      <h4>Análise Técnica Clássica</h4>
+      <small>Flávio Lemos</small>
+      <p style="font-size: 13px;">O autor brasileiro detalha como identificar zonas de relevância no gráfico da B3, focando em volume e na força das rejeições em níveis de suporte.</p>
+    </div>
+    <div class="book-card">
+      <h4>Candlestick: Um Método para Lucrar</h4>
+      <small>Carlos Alberto Debastiani</small>
+      <p style="font-size: 13px;">Foca em como os padrões de velas (dojis, martelos) confirmam a força de um suporte ou resistência, ensinando o trader a não entrar "cego" na zona.</p>
+    </div>
+  </div>
+</section>
+
+<section class="page">
+  <h2 class="title-mono h-section">Curiosidades Técnicas</h2>
+  <div class="body-text">
+    <ul>
+      <li><strong>Inversão de Polaridade:</strong> É o fenômeno onde uma resistência rompida passa a atuar como suporte (e vice-versa). Isso ocorre porque o "arrependimento" do mercado muda de lado.</li>
+      <li><strong>Números Redondos:</strong> Preços como R$ 10,00, R$ 50,00 ou US$ 100,00 funcionam naturalmente como suportes/resistências psicológicos fortes, pois o ser humano tende a colocar ordens em números inteiros.</li>
+      <li><strong>Zonas, não Linhas:</strong> O maior erro de iniciantes é achar que suporte é uma linha exata. Profissionais tratam como "regiões" de preço, permitindo ruídos e falsos rompimentos.</li>
+    </ul>
+  </div>
+
+  <div style="margin-top: 40px; border-top: 1px solid #d8cdb7; padding-top: 20px;">
+    <h2 class="title-mono h-section" style="border:none;">Conclusão</h2>
+    <p class="body-text">
+        O estudo de suporte e resistência é o alicerce de qualquer sistema de trading lucrativo. Ele permite que o operador defina o seu <strong>Risco vs Retorno</strong> com clareza: compra-se próximo ao suporte (risco baixo) para buscar a resistência (alvo). 
+        <br><br>
+        Sem entender esses níveis, o trader está operando no escuro, ignorando as barreiras onde o "smart money" costuma atuar. Como diz o ditado do mercado: <em>"O preço tem memória, e ignorar o passado é estar condenado a perder dinheiro no presente."</em>
+    </p>
+  </div>
+
+  <div style="margin-top: 60px;">
+    <p style="font-family: monospace; font-size: 14px;">
+      <strong>Contato:</strong> pedrooscar1708@gmail.com<br>
+      <strong>LinkedIn:</strong> Pedro Oscar
+    </p>
+  </div>
+  <div class="corner br"></div>
+</section>
+
+</body>
+</html>

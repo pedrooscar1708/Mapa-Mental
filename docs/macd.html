@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MACD — por Pedro Oscar</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23f7f1e7'/%3E%3Crect x='14' y='12' width='36' height='40' fill='white' stroke='%231a1a1a' stroke-width='2'/%3E%3Cpath d='M22 22 L42 22 M22 30 L42 30 M22 38 L34 38' stroke='%23b8860b' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #f7f1e7;
+    --ink: #1a1a1a;
+    --muted: #4a4a4a;
+    --line: #1a1a1a;
+    --accent: #c0392b;
+    --gold: #b8860b;
+    --green: #27ae60;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(247, 241, 231, 0.94);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid #d8cdb7;
+    z-index: 50;
+    display: flex; gap: 8px; align-items: center;
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+  .topbar a, .topbar button {
+    background: #fff; color: var(--ink);
+    border: 1px solid #d8cdb7;
+    padding: 6px 12px; border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px; cursor: pointer; font-family: inherit;
+  }
+  .topbar a:hover, .topbar button:hover { background: #efe7d6; }
+  .topbar .spacer { flex: 1; }
+  .topbar small { color: var(--muted); }
+
+  .page {
+    position: relative;
+    width: 100%; max-width: 960px;
+    min-height: 540px;
+    margin: 24px auto;
+    padding: 64px 72px;
+    background: var(--paper);
+    border: 1px solid #d8cdb7;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .page:first-of-type { margin-top: 80px; }
+
+  .corner { position: absolute; pointer-events: none; }
+  .corner.tl { top: 24px; left: 36px; border-top: 1.5px solid var(--line); border-left: 1.5px solid var(--line); width: 60%; height: 140px; }
+  .corner.br { bottom: 24px; right: 36px; border-bottom: 1.5px solid var(--line); border-right: 1.5px solid var(--line); width: 60%; height: 140px; }
+
+  .dots {
+    position: absolute;
+    width: 130px; height: 130px;
+    background-image: radial-gradient(circle, #1a1a1a 2px, transparent 2.5px);
+    background-size: 18px 18px;
+    pointer-events: none;
+  }
+  .dots.tl { top: 30px; left: 30px; }
+  .dots.tr { top: 30px; right: 30px; }
+  .dots.bl { bottom: 30px; left: 30px; }
+  .dots.br { bottom: 30px; right: 30px; }
+  .dots.small { width: 90px; height: 90px; }
+
+  .title-mono {
+    font-family: "Courier New", "Lucida Console", monospace;
+    font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .h-big { font-size: 42px; margin: 0; letter-spacing: 0.18em; }
+  .h-section {
+    font-family: "Courier New", monospace;
+    font-weight: 700; font-size: 28px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    margin: 0 0 24px 0;
+  }
+  .h-sub { font-size: 18px; font-weight: 600; margin: 22px 0 8px 0; }
+  .author { font-size: 22px; color: var(--muted); font-weight: 400; margin-top: 8px; letter-spacing: 0.02em; }
+  .body-text { font-size: 15.5px; line-height: 1.65; }
+  .body-text p { margin: 0 0 12px 0; }
+  .body-text strong { color: var(--ink); }
+
+  ul.topics {
+    list-style: none; padding: 0; margin: 0;
+    font-family: "Courier New", monospace;
+    font-size: 16px; letter-spacing: 0.06em;
+  }
+  ul.topics li { padding: 6px 0 6px 24px; position: relative; text-transform: uppercase; }
+  ul.topics li::before { content: "•"; position: absolute; left: 4px; top: 6px; font-size: 18px; }
+
+  .cover {
+    min-height: 640px;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center;
+    padding: 80px 60px;
+  }
+  .cover .h-big { font-size: 56px; }
+  .cover .phi {
+    font-size: 18px; color: var(--gold);
+    margin-top: 18px; font-style: italic; letter-spacing: 0.06em;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 40px; align-items: start;
+    position: relative; z-index: 1;
+  }
+
+  .sequence-fig {
+    background: #fff;
+    border: 1px solid #d8cdb7;
+    border-radius: 6px;
+    padding: 18px;
+    text-align: center;
+    margin: 18px 0;
+    font-family: "Courier New", monospace;
+    font-size: 15px; letter-spacing: 0.05em;
+  }
+  .sequence-fig .formula {
+    display: block;
+    margin: 10px 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .sequence-fig .ratio { margin-top: 14px; font-size: 14px; color: var(--muted); }
+
+  .book {
+    background: #fff;
+    border: 1px solid #d8cdb7;
+    border-left: 4px solid var(--line);
+    border-radius: 4px;
+    padding: 14px 18px;
+    margin-bottom: 14px;
+  }
+  .book .num { font-family: "Courier New", monospace; font-weight: 700; color: var(--accent); font-size: 14px; letter-spacing: 0.1em; }
+  .book h4 { margin: 4px 0 4px 0; font-size: 16px; font-weight: 700; }
+  .book .meta { color: var(--muted); font-size: 13px; margin-bottom: 8px; font-style: italic; }
+  .book p { margin: 0; font-size: 14px; line-height: 1.55; }
+
+  .note-card {
+    background: #fff;
+    border: 1px solid #d8cdb7;
+    border-radius: 6px;
+    padding: 18px 22px;
+    margin: 14px 0;
+  }
+  .note-card .badge {
+    display: inline-block;
+    background: var(--gold); color: #fff;
+    padding: 2px 10px; border-radius: 3px;
+    font-size: 11px; font-family: "Courier New", monospace;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .note-card ol { margin: 0; padding-left: 20px; }
+  .note-card ol li { margin-bottom: 10px; line-height: 1.5; }
+  .note-card .meta { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 8px; }
+
+  .levels {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .level {
+    background: #fff;
+    border: 1px solid #d8cdb7;
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+    font-family: "Courier New", monospace;
+  }
+  .level .pct { font-size: 18px; font-weight: 700; color: var(--gold); }
+  .level .desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  .contact-block { font-family: "Courier New", monospace; font-size: 16px; line-height: 2; }
+  .credit-box {
+    margin-top: 28px;
+    padding: 14px 18px;
+    border: 1.5px dashed var(--line);
+    border-radius: 4px;
+    background: #fff;
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 14px; line-height: 1.6;
+  }
+  .credit-box strong { color: var(--accent); }
+
+  @media (max-width: 720px) {
+    .page { padding: 40px 26px; min-height: auto; }
+    .two-col { grid-template-columns: 1fr; gap: 20px; }
+    .h-big { font-size: 30px !important; }
+    .h-section { font-size: 22px; }
+    .cover { padding: 50px 24px; min-height: auto; }
+    .cover .h-big { font-size: 34px !important; }
+    .author { font-size: 18px; }
+    .corner, .dots { transform: scale(0.7); }
+  }
+
+  @media print {
+    body { background: #fff; }
+    .topbar { display: none; }
+    .page { page-break-after: always; box-shadow: none; margin: 0 auto; border: none; max-width: none; width: 100%; }
+    .page:last-child { page-break-after: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="#">← Voltar ao Mapa</a>
+  <button onclick="window.print()">Imprimir / Salvar PDF</button>
+  <div class="spacer"></div>
+  <small>Trabalho — MACD</small>
+</div>
+
+<section class="page cover">
+  <div class="dots tl"></div>
+  <div class="corner tl"></div>
+  <h1 class="title-mono h-big">MACD</h1>
+  <div class="author">por Pedro Oscar</div>
+  <div class="phi">Moving Average Convergence Divergence</div>
+  <div class="corner br"></div>
+  <div class="dots br"></div>
+</section>
+
+<section class="page">
+  <div class="corner tl"></div>
+  <div class="two-col">
+    <div class="left">
+      <h2 class="title-mono h-section">Tópicos<br/>de<br/>Abordagem</h2>
+    </div>
+    <div class="right">
+      <ul class="topics">
+        <li>Quem inventou e contexto histórico</li>
+        <li>Para que serve e funcionamento</li>
+        <li>O Histograma MACD</li>
+        <li>3 principais livros em inglês</li>
+        <li>Aplicação prática e Estratégias</li>
+        <li>Curiosidades</li>
+        <li>Conclusão</li>
+      </ul>
+    </div>
+  </div>
+  <div class="dots br"></div>
+</section>
+
+<section class="page">
+  <div class="corner tl"></div>
+  <h2 class="title-mono h-section">Quem inventou</h2>
+  <div class="body-text">
+    <p>O <strong>MACD</strong> (Moving Average Convergence Divergence, ou Convergência e Divergência de Médias Móveis) foi criado pelo gestor de fundos e analista de mercado americano <strong>Gerald Appel</strong> em <strong>1979</strong>.</p>
+    <p>Appel desenhou o indicador com um objetivo claro: criar uma ferramenta que conseguisse capturar a força das tendências sem perder o timing das reversões de preço. Ele combinou as características de um indicador seguidor de tendência (médias móveis) com as propriedades dinâmicas de um oscilador de momentum.</p>
+
+    <div class="sequence-fig">
+      <div class="formula">Linha MACD = EMA(12) - EMA(26)</div>
+      <div class="formula" style="color: var(--gold);">Linha de Sinal = EMA(9) do MACD</div>
+      <div class="ratio">
+        A configuração clássica <strong>(12, 26, 9)</strong> foi criada originalmente para o mercado diário de ações e continua sendo o padrão global até hoje.
+      </div>
+    </div>
+
+    <p><strong>Contexto histórico:</strong> No final dos anos 70, os gráficos ainda eram desenhados majoritariamente à mão ou computados em máquinas muito lentas. A simplicidade matemática do MACD permitiu que ele se tornasse um sucesso imediato entre os operadores da época, pois entregava leituras visuais nítidas com cálculos rápidos.</p>
+  </div>
+  <div class="dots br small"></div>
+</section>
+
+<section class="page">
+  <div class="dots tl small"></div>
+  <h2 class="title-mono h-section">Para que serve</h2>
+  <div class="body-text">
+    <p>O MACD serve para identificar três aspectos cruciais do mercado: <strong>a direção da tendência, o momentum (velocidade do preço) e os pontos potenciais de exaustão ou reversão</strong>.</p>
+
+    <h3 class="h-sub">Os Três Elementos Visuais</h3>
+    <p><strong>Linha MACD (Linha Rápida):</strong> É o núcleo do indicador. Ela mostra a distância e a relação entre duas Médias Móveis Exponenciais (geralmente de 12 e 26 períodos). Quando a linha se afasta do eixo zero, significa que a tendência ganhou força.</p>
+    <p><strong>Linha de Sinal (Linha Lenta):</strong> Uma média móvel exponencial de 9 períodos aplicada sobre a própria Linha MACD. Ela funciona como um gatilho de suavização para filtrar ruídos do mercado.</p>
+    <p><strong>Linha Zero:</strong> O ponto de equilíbrio. Quando a linha MACD cuzará para cima da linha zero, indica que a média de curto prazo está maior que a de longo prazo (viés comprador). O cruzamento para baixo indica viés vendedor.</p>
+
+    <h3 class="h-sub">Sinais Operacionais Clássicos</h3>
+    <div class="levels">
+      <div class="level"><div class="pct">Cruzamento</div><div class="desc">MACD cruza acima ou abaixo do Sinal</div></div>
+      <div class="level"><div class="pct">Linha Zero</div><div class="desc">Indica virada na tendência macro</div></div>
+      <div class="level"><div class="pct">Divergência</div><div class="desc">Preço faz topo novo, mas o MACD não</div></div>
+    </div>
+  </div>
+  <div class="corner br"></div>
+</section>
+
+<section class="page">
+  <div class="corner tl"></div>
+  <h2 class="title-mono h-section">O Histograma MACD</h2>
+  <div class="body-text">
+    <p>Em <strong>1986</strong>, o analista <strong>Thomas Aspray</strong> adicionou um elemento revolucionário ao indicador original de Appel: o <strong>Histograma MACD</strong>.</p>
+    <p>O histograma não mede o preço em si, mas sim a <strong>distância exata entre a Linha MACD e a Linha de Sinal</strong>. Ele é representado por barras verticais que oscilam acima e abaixo de uma linha central zero.</p>
+
+    <div class="note-card">
+      <div class="badge">Inovação de Aspray · 1986</div>
+      <h3 class="h-sub" style="margin-top: 4px;">Leitura do Histograma</h3>
+      <ol>
+        <li><strong>Barras Expandindo:</strong> Indicam que a velocidade (momentum) do movimento atual está aumentando. A linha rápida está se afastando da lenta.</li>
+        <li><strong>Barras Encolhendo:</strong> Alerta antecipado de que a tendência está perdendo força, antes mesmo de ocorrer o cruzamento das linhas.</li>
+        <li><strong>Cruzamento do Eixo Zero:</strong> O exato momento em que as barras mudam de lado coincide perfeitamente com o cruzamento das linhas MACD e de Sinal.</li>
+      </ol>
+      <div class="meta">O histograma transformou o MACD em um indicador de momentum preditivo muito mais ágil.</div>
+    </div>
+
+    <p>A grande vantagem do histograma é a capacidade de antecipar movimentos. Quando as barras começam a diminuir de tamanho em uma tendência de alta, o trader recebe o aviso de que a pressão compradora está diminuindo, permitindo proteção de capital precoce.</p>
+  </div>
+  <div class="dots br small"></div>
+</section>
+
+<section class="page">
+  <div class="dots tl small"></div>
+  <h2 class="title-mono h-section">3 Livros em Inglês</h2>
+  <div class="body-text">
+    <div class="book">
+      <div class="num">01</div>
+      <h4>Technical Analysis: Power Tools for Active Investors</h4>
+      <div class="meta">Gerald Appel — 2005</div>
+      <p>Escrito pelo próprio criador do indicador. É a leitura definitiva para quem quer entender a mente por trás da ferramenta. <strong>Como funciona:</strong> Appel explica o desenvolvimento do MACD, variações de parâmetros para mercados lentos ou voláteis, e como ele integra o indicador com ciclos de mercado de longo prazo.</p>
+    </div>
+    <div class="book">
+      <div class="num">02</div>
+      <h4>Trading for a Living</h4>
+      <div class="meta">Dr. Alexander Elder — 1993</div>
+      <p>Um dos maiores clássicos da literatura de trading. Dr. Elder dedica seções inteiras ao MACD através do seu famoso sistema "Triple Screen" (Tela Tripla). <strong>Como funciona:</strong> Ele destrincha o Histograma MACD e ensina que as divergências dele com o preço são os sinais mais fortes e confiáveis de toda a análise técnica.</p>
+    </div>
+    <div class="book">
+      <div class="num">03</div>
+      <h4>Trading Systems and Methods</h4>
+      <div class="meta">Perry J. Kaufman — 2013 (5ª Edição)</div>
+      <p>Uma enciclopédia técnica voltada para traders quantitativos e profissionais. <strong>Como funciona:</strong> Apresenta testes estatísticos rigorosos sobre a assertividade do MACD, demonstrações matemáticas de seus atrasos inerentes e variações modernas de algoritmos baseados no indicador.</p>
+    </div>
+  </div>
+  <div class="corner br"></div>
+</section>
+
+<section class="page">
+  <div class="corner tl"></div>
+  <h2 class="title-mono h-section">Aplicação prática</h2>
+  <div class="body-text">
+    <p>Anotações operacionais sobre o uso correto do MACD de forma profissional e integrada ao gerenciamento de risco.</p>
+
+    <div class="note-card">
+      <div class="badge">Diretrizes de Trade · Operacional</div>
+      <h3 class="h-sub" style="margin-top: 4px;">Regras de Ouro do MACD</h3>
+      <ol>
+        <li><strong>Filtro de Tendência:</strong> Se a Linha MACD estiver acima de zero, procure apenas compras. Se estiver abaixo de zero, procure apenas vendas. Evite operar contra a linha macro.</li>
+        <li><strong>O Perigo da Lateralidade:</strong> Em mercados consolidados (sem tendência clara), o MACD gera muitos sinais falsos ("violonadas"). Desative ou desconsidere o indicador nessas fases.</li>
+        <li><strong>Ouro Técnico (Divergências):</strong> Se o preço faz um fundo mais baixo que o anterior, mas o histograma MACD faz um fundo mais alto, há uma <em>Divergência Altista</em>. É o sinal de maior probabilidade de reversão.</li>
+        <li><strong>Gatilho de Entrada:</strong> O MACD mostra o contexto e a força do movimento. O gatilho fino de entrada deve ser confirmado pela ação do preço (Price Action, rompimento de pivô ou candle de força).</li>
+      </ol>
+    </div>
+
+    <h3 class="h-sub">Fluxo Prático de Execução</h3>
+    <p>① Analisa o gráfico em um tempo gráfico maior para ver a posição do MACD em relação à linha zero.<br>
+       ② No tempo operacional, localiza divergências entre o preço e o histograma.<br>
+       ③ Aguarda a redução das barras do histograma (perda de força da tendência contrária).<br>
+       ④ Executa a entrada quando as linhas MACD e Sinal se cruzam a favor do movimento principal.<br>
+       ⑤ Posiciona o Stop Loss abaixo do último fundo/topo e projeta alvos baseados na amplitude do movimento.</p>
+  </div>
+  <div class="dots br small"></div>
+</section>
+
+<section class="page">
+  <div class="dots tl small"></div>
+  <h2 class="title-mono h-section">Curiosidades</h2>
+  <div class="body-text">
+    <p><strong>Gerald Appel não era apenas trader.</strong> Além de gestor de recursos, Appel era psicoterapeuta licenciado. Essa bagagem ajudou-o a entender profundamente a psicologia de massa do mercado, projetando o MACD para mensurar o comportamento emocional coletivo dos investidores.</p>
+    <p><strong>Não existe repintura.</strong> Diferente de alguns indicadores modernos que mudam o passado conforme novos preços entram ("repintam"), o MACD é baseado em médias matemáticas estritas. O sinal gerado no fechamento do candle é definitivo e imutável.</p>
+    <p><strong>Criado para ações, adaptado para tudo.</strong> Embora a calibragem original (12, 26, 9) tenha sido modelada pensando no mercado de ações na década de 70, o modelo provou-se tão robusto que é o padrão utilizado hoje em criptoativos, Forex e commodities.</p>
+    <p><strong>Duas linhas vs. Uma linha.</strong> Em algumas plataformas de trading, o MACD padrão é exibido com apenas uma linha e o histograma. No entanto, a comunidade profissional prefere o layout clássico de duas linhas (MACD + Sinal) para rastrear os cruzamentos com clareza visual absoluta.</p>
+  </div>
+  <div class="corner br"></div>
+</section>
+
+<section class="page">
+  <div class="corner tl"></div>
+  <h2 class="title-mono h-section" style="text-align: center;">Conclusão</h2>
+  <div class="body-text" style="max-width: 720px; margin: 0 auto; text-align: center; font-size: 16px;">
+    <p>O MACD sobreviveu a quase cinco décadas de evolução tecnológica e mudanças estruturais nos mercados financeiros.</p>
+    <p>Sua genialidade reside no fato de ser um "indicador dois em um": ele resolve o problema de rastreamento de tendências ao mesmo tempo que mede a velocidade do dinheiro através do momentum do mercado.</p>
+    <p>Como qualquer ferramenta de análise técnica, o MACD não é uma bola de cristal e falha quando o mercado perde o rumo e entra em forte lateralização. Contudo, quando combinado com uma leitura sólida de suportes, resistências e estruturas de preço, ele permanece como um dos pilares mais confiáveis para traders do mundo todo.</p>
+    <p style="margin-top: 30px; font-style: italic; color: var(--muted);">"O mercado é movido por ondas de ganância e medo; o MACD é a régua matemática que mede o tamanho dessas ondas."</p>
+  </div>
+  <div class="dots br"></div>
+</section>
+
+<section class="page">
+  <div class="dots tl"></div>
+  <div class="corner tl"></div>
+  <h2 class="title-mono h-section">Contato</h2>
+  <div class="contact-block">
+    <p><strong>insta:</strong> pedrooscar1708</p>
+    <p><strong>email:</strong> pedrooscar1708@gmail.com</p>
+    <p><strong>telefone:</strong> (11) 96342-6694</p>
+  </div>
+
+  <div class="credit-box">
+    <strong>Trabalho realizado com auxílio de Inteligência Artificial</strong> — Estrutura de design mantida conforme o padrão do modelo conceitual anterior. Pesquisa histórica e dados técnicos validados a partir da literatura clássica de análise técnica industrial.
+  </div>
+
+  <div class="corner br"></div>
+</section>
+
+<div style="height: 40px;"></div>
+
+</body>
+</html>

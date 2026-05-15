@@ -416,15 +416,53 @@ function openLink(url) {
 
 // === Abrir trabalho embutido (built-in) ===
 function openEmbeddedDoc(docName) {
-  const cleanName = (docName || "").replace(".html", "");
-  const el = document.getElementById("doc-" + cleanName);
-  if (!el) { alert("Trabalho não encontrado: " + docName); return; }
-  const content = el.textContent;
-  const blob = new Blob([content], { type: "text/html;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const win = window.open(url, "_blank");
-  if (!win) alert("Permita pop-ups.");
-  setTimeout(() => URL.revokeObjectURL(url), 120000);
+  const cleanName = (docName || "").replace(".html", "").replace(".pdf", "");
+  
+  // Tenta carregar de docs/ primeiro (novos arquivos)
+  const docPath = "docs/" + cleanName + ".html";
+  const pdfPath = "docs/" + cleanName + ".pdf";
+  
+  // Tenta HTML primeiro
+  fetch(docPath)
+    .then(r => r.ok ? r.text() : fetch(pdfPath).then(p => p.ok ? p.blob() : null))
+    .then(content => {
+      if (content instanceof Blob) {
+        const url = URL.createObjectURL(content);
+        window.open(url, "_blank");
+        return;
+      }
+      if (content) {
+        const blob = new Blob([content], { type: "text/html;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        window.open(url, "_blank");
+        return;
+      }
+      // Se não encontrou em docs/, tenta embutido
+      const el = document.getElementById("doc-" + cleanName);
+      if (!el) { 
+        alert("Documento não encontrado: " + docName); 
+        return; 
+      }
+      const embeddedContent = el.textContent;
+      const blob = new Blob([embeddedContent], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const win = window.open(url, "_blank");
+      if (!win) alert("Permita pop-ups.");
+      setTimeout(() => URL.revokeObjectURL(url), 120000);
+    })
+    .catch(() => {
+      // Se falhar, tenta embutido
+      const el = document.getElementById("doc-" + cleanName);
+      if (!el) { 
+        alert("Documento não encontrado: " + docName); 
+        return; 
+      }
+      const embeddedContent = el.textContent;
+      const blob = new Blob([embeddedContent], { type: "text/html;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const win = window.open(url, "_blank");
+      if (!win) alert("Permita pop-ups.");
+    });
 }
 
 // === Render ===

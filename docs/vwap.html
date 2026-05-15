@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VWAP — por Pedro Oscar</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23f7f1e7'/%3E%3Crect x='14' y='12' width='36' height='40' fill='white' stroke='%231a1a1a' stroke-width='2'/%3E%3Cpath d='M22 22 L42 22 M22 30 L42 30 M22 38 L34 38' stroke='%2327ae60' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --paper: #f7f1e7;
+    --ink: #1a1a1a;
+    --muted: #4a4a4a;
+    --line: #1a1a1a;
+    --accent: #2980b9;
+    --gold: #b8860b;
+    --green: #27ae60;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .topbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: rgba(247, 241, 231, 0.94);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid #d8cdb7;
+    z-index: 50;
+    display: flex; gap: 8px; align-items: center;
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+  .topbar button {
+    background: #fff; color: var(--ink);
+    border: 1px solid #d8cdb7;
+    padding: 6px 12px; border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px; cursor: pointer; font-family: inherit;
+  }
+  .topbar button:hover { background: #efe7d6; }
+  .topbar .spacer { flex: 1; }
+  .topbar small { color: var(--muted); }
+
+  .page {
+    position: relative;
+    width: 100%; max-width: 960px;
+    min-height: 540px;
+    margin: 24px auto;
+    padding: 64px 72px;
+    background: var(--paper);
+    border: 1px solid #d8cdb7;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .page:first-of-type { margin-top: 80px; }
+
+  .corner { position: absolute; pointer-events: none; }
+  .corner.tl { top: 24px; left: 36px; border-top: 1.5px solid var(--line); border-left: 1.5px solid var(--line); width: 60%; height: 140px; }
+  .corner.br { bottom: 24px; right: 36px; border-bottom: 1.5px solid var(--line); border-right: 1.5px solid var(--line); width: 60%; height: 140px; }
+
+  .dots {
+    position: absolute;
+    width: 130px; height: 130px;
+    background-image: radial-gradient(circle, #1a1a1a 2px, transparent 2.5px);
+    background-size: 18px 18px;
+    pointer-events: none;
+  }
+  .dots.tl { top: 30px; left: 30px; }
+  .dots.br { bottom: 30px; right: 30px; }
+
+  .title-mono {
+    font-family: "Courier New", "Lucida Console", monospace;
+    font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .h-big { font-size: 56px; margin: 0; }
+  .h-section {
+    font-family: "Courier New", monospace;
+    font-weight: 700; font-size: 28px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    margin: 0 0 24px 0;
+  }
+  .h-sub { font-size: 18px; font-weight: 600; margin: 22px 0 8px 0; }
+  .author { font-size: 22px; color: var(--muted); font-weight: 400; margin-top: 8px; letter-spacing: 0.02em; }
+  .body-text { font-size: 15.5px; line-height: 1.65; }
+  .body-text strong { color: var(--ink); }
+
+  .cover {
+    min-height: 640px;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center;
+  }
+  .cover .tagline {
+    font-size: 18px; color: var(--green);
+    margin-top: 18px; font-style: italic; letter-spacing: 0.06em;
+  }
+
+  .formula-box {
+    background: #fff;
+    border: 1px solid #d8cdb7;
+    padding: 25px;
+    text-align: center;
+    margin: 20px 0;
+    font-family: "Times New Roman", serif;
+    font-size: 22px;
+  }
+
+  .book {
+    background: #fff;
+    border: 1px solid #d8cdb7;
+    border-left: 4px solid var(--accent);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+  }
+
+  .note-card {
+    background: #fff;
+    border: 1px solid #d8cdb7;
+    padding: 18px 22px;
+    margin: 14px 0;
+  }
+  .badge {
+    background: var(--accent); color: #fff;
+    padding: 2px 10px; font-size: 11px; font-family: monospace;
+    text-transform: uppercase; margin-bottom: 8px; display: inline-block;
+  }
+
+  @media print {
+    .topbar { display: none; }
+    .page { page-break-after: always; box-shadow: none; border: none; width: 100%; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button onclick="window.print()">Imprimir / Salvar PDF</button>
+  <div class="spacer"></div>
+  <small>Trabalho Acadêmico — VWAP</small>
+</div>
+
+<section class="page cover">
+  <div class="dots tl"></div>
+  <div class="corner tl"></div>
+  <h1 class="title-mono h-big">VWAP</h1>
+  <div class="author">por Pedro Oscar</div>
+  <div class="tagline">O Preço Médio Ponderado pelo Volume</div>
+  <div class="corner br"></div>
+  <div class="dots br"></div>
+</section>
+
+<section class="page">
+  <div class="corner tl"></div>
+  <h2 class="title-mono h-section">Origem e Conceito</h2>
+  <div class="body-text">
+    <p>Diferente de indicadores centenários como as Médias Móveis Simples, o <strong>VWAP</strong> ganhou força na era da computação e do trading algorítmico, especificamente no final da década de 80.</p>
+    <p><strong>Quem descobriu:</strong> Não há um "único inventor" creditado como no caso de Fibonacci ou Elliott, mas o conceito foi popularizado por <strong>James Hyerczyk</strong> e amplamente adotado por investidores institucionais para medir a qualidade de execução de grandes ordens.</p>
+    <p><strong>A necessidade:</strong> Grandes bancos precisavam de uma métrica que mostrasse onde o "dinheiro pesado" estava operando. Uma média de preços comum é falha porque trata um lote de 100 ações com o mesmo peso de um lote de 1 milhão de ações. O VWAP corrigiu isso.</p>
+  </div>
+  <div class="dots br"></div>
+</section>
+
+<section class="page">
+  <div class="corner tl"></div>
+  <h2 class="title-mono h-section">O Cálculo</h2>
+  <div class="body-text">
+    <p>O VWAP é calculado somando o valor financeiro negociado em cada transação (Preço × Quantidade) e dividindo pelo total de ações/contratos negociados no período (geralmente o dia).</p>
+    
+    <div class="formula-box">
+      VWAP = Σ (Preço * Volume) / Σ Volume
+    </div>
+
+    <p><strong>Passo a passo intraday:</strong></p>
+    <ol>
+      <li>Calcula-se o preço médio do candle (H+L+C / 3).</li>
+      <li>Multiplica-se esse preço pelo volume do período.</li>
+      <li>Mantém-se um total acumulado desses valores.</li>
+      <li>Divide-se esse total pelo volume acumulado do dia.</li>
+    </ol>
+    <p>Por ser um cálculo acumulado que <strong>reseta a cada abertura de mercado</strong>, o VWAP é considerado o "preço justo" da sessão atual.</p>
+  </div>
+  <div class="dots br"></div>
+</section>
+
+<section class="page">
+  <div class="corner tl"></div>
+  <h2 class="title-mono h-section">Referência Literária</h2>
+  <div class="body-text">
+    <div class="book">
+      <h4 style="margin:0">Maximum Trading Gains with Anchored VWAP</h4>
+      <p style="font-style: italic; color: var(--muted); margin: 4px 0;">Brian Shannon — 2023</p>
+      <p>Embora existam manuais técnicos antigos, o livro de Brian Shannon é a bíblia moderna sobre o tema. Ele introduz o conceito de <strong>Anchored VWAP</strong> (VWAP Ancorado), permitindo que o trader escolha o evento psicológico (como uma notícia ou balanço) para iniciar o cálculo, em vez de apenas a abertura do dia.</p>
+    </div>
+    <p><strong>Por que ler:</strong> Ensina que o preço acima do VWAP indica que o comprador médio do dia está no lucro, enquanto abaixo, o vendedor médio está no controle. É a ferramenta definitiva para entender a <strong>psicologia da oferta e demanda</strong> em tempo real.</p>
+  </div>
+</section>
+
+<section class="page">
+  <div class="corner tl"></div>
+  <h2 class="title-mono h-section">Uso Prático</h2>
+  <div class="body-text">
+    <p>No mercado, o VWAP atua como um <strong>ímã</strong> e como uma <strong>barreira</strong>. É utilizado principalmente de três formas:</p>
+    
+    <div class="note-card">
+      <div class="badge">Estratégias Comuns</div>
+      <ul>
+        <li><strong>Referência Institucional:</strong> Grandes players tentam comprar abaixo do VWAP e vender acima dele para garantir que estão operando "melhor que a média".</li>
+        <li><strong>Suporte e Resistência Dinâmico:</strong> Em tendências fortes, o preço costuma "testar" o VWAP e retomar o movimento original.</li>
+        <li><strong>Filtro de Tendência:</strong> Muitos traders só operam na compra se o preço estiver acima do VWAP, evitando "lutar contra a maré" do dia.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="page">
+  <div class="corner tl"></div>
+  <h2 class="title-mono h-section">Curiosidades</h2>
+  <div class="body-text">
+    <ul>
+      <li><strong>O Indicador dos Tubarões:</strong> É o único indicador que os algoritmos de grandes bancos (HFTs) realmente "olham" para executar ordens fracionadas sem deslocar o preço.</li>
+      <li><strong>Não serve para o gráfico Diário:</strong> O VWAP padrão é um indicador <em>intraday</em>. Usá-lo em tempos gráficos semanais ou mensais sem "ancoragem" perde o sentido matemático.</li>
+      <li><strong>Bandas de Desvio:</strong> Assim como as Bandas de Bollinger, existem as "Bandas de VWAP" que medem o desvio padrão, indicando zonas de exaustão do mercado.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="page">
+  <div class="corner tl"></div>
+  <h2 class="title-mono h-section" style="text-align: center;">Conclusão</h2>
+  <div class="body-text" style="max-width: 720px; margin: 0 auto; text-align: center;">
+    <p>O VWAP não é apenas uma média; é o <strong>rastreador de pegadas</strong> dos grandes investidores. Enquanto indicadores baseados apenas em preço podem ser enganosos, o volume traz a verdade sobre o comprometimento financeiro dos participantes.</p>
+    <p>Dominar o VWAP é entender onde o mercado considera o preço "caro" ou "barato" em um determinado dia, servindo como a bússola mais precisa para o day trader profissional.</p>
+  </div>
+  
+  <div style="margin-top: 100px;">
+    <div class="contact-block" style="font-family: monospace;">
+      <p><strong>insta:</strong> pedrooscar1708</p>
+      <p><strong>email:</strong> pedrooscar1708@gmail.com</p>
+    </div>
+  </div>
+  <div class="corner br"></div>
+</section>
+
+</body>
+</html>
