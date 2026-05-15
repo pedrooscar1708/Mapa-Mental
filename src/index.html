@@ -419,8 +419,8 @@ function openEmbeddedDoc(docName) {
   const cleanName = (docName || "").replace(".html", "").replace(".pdf", "");
   
   // Tenta carregar de docs/ primeiro (novos arquivos)
-  const docPath = "../docs/" + cleanName + ".html";
-  const pdfPath = "../docs/" + cleanName + ".pdf";
+  const docPath = "/Mapa-Mental/docs/" + cleanName + ".html";
+  const pdfPath = "/Mapa-Mental/docs/" + cleanName + ".pdf";
   
   // Tenta HTML primeiro
   fetch(docPath)
