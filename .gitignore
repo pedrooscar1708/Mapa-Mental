@@ -1,0 +1,23 @@
+# Node modules
+node_modules/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# PDFs (opcional - remova se quiser versioná-los)
+docs/*.pdf
+
+# Arquivos locais
+*.local
+.env
+
+# Build
+dist/
+build/
